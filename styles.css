@@ -1,0 +1,60 @@
+@font-face { font-family: Title; src: url('foggybottom.ttf'); } 
+
+body,html{
+height:100%;
+overflow:hidden;
+margin:0;
+}
+
+#canvas-id {
+    margin: 0; 
+    padding: 0;
+	background:#EEE;
+	cursor:crosshair;
+}
+.container{
+	display:flex;
+	height:100%;
+	flex-direction:column;
+}
+.canvas{
+flex:9
+}
+*{
+box-sizing:border-box;
+}
+header{
+	background:#AAA;
+	flex:1;
+	display:flex;
+	padding:5px 10px;
+	align-items: center;
+	justify-content: center;
+}
+span{
+	font-family:Title;
+	flex:1;
+	vertical-align:middle;
+	text-align:center;
+}
+span.title{
+	font-size:300%;
+}
+span.back{
+	font-size:200%;
+	text-align:left;
+}
+span.back:hover{
+	color:blue;
+}
+a{ 
+	color: inherit; 
+	text-decoration:none;
+}
+@media screen and (max-width:900px){
+	span.back,span.fill{
+		display:none;
+	}
+}
+
+
