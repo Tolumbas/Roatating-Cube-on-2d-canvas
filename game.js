@@ -10,7 +10,7 @@ var game=(function(){
 	var lastmove;
 	var rotateclick = false;
 
-	var myPoints = [[50,-50,-50],[20,40,10],[0,0,10]];
+	var myPoints = [[50,-50,-50],[0,-50,50],[0,50,50]];
 
 
 	for (var x =0;x<=1;x++){
@@ -20,6 +20,8 @@ var game=(function(){
 			}
 		}
 	}
+
+	// Cube Formation
 
 	cube.push(["moveTo",vtx[0],vtx[0]]);
 
@@ -47,26 +49,37 @@ var game=(function(){
 	cube.push(["moveTo",vtx[6],vtx[3]]);
 	cube.push(["lineTo",vtx[3],vtx[7]]);
 
-/*	var dp1x = myPoints[0][0]-myPoints[1][0]; 
-	var dp1y = myPoints[0][1]-myPoints[1][1]; 
+	// The three points controll
 
-	var dp2y = myPoints[0][1]-myPoints[2][1];
-	var dp2z = myPoints[0][2]-myPoints[2][2];
+	var dp2z = myPoints[0][2]-myPoints[1][2]; 
+	var dp2x = myPoints[0][0]-myPoints[1][0]; 
 
-	var angleXY = Math.atan2(dp1y,dp1x);
-	var angleYZ = Math.atan2(dp2y,dp2z);
+	var dp3z = myPoints[0][2]-myPoints[2][2];
+	var dp3y = myPoints[0][1]-myPoints[2][1];
+
+	var angleXY = Math.atan2(dp2x,dp2z);
+	var angleYZ = Math.atan2(dp3y,dp3z);
 
 	vtx.forEach(function (vertex) {
-		var out1 = rotate(vertex.x,vertex.y,angleXY);
+		var out1 = rotate(vertex.z,vertex.x,angleXY);
 		vertex.z = out1.x;
 		vertex.x = out1.y;
 		var out2 = rotate(vertex.z,vertex.y,angleYZ);
 		vertex.z = out2.x;
 		vertex.y = out2.y;
-	})*/
+	})
+	myPoints.forEach(function (vertex) {
+		var out1 = rotate(vertex[2],vertex[0],angleXY);
+		vertex[2] = out1.x;
+		vertex[0] = out1.y;
+		var out2 = rotate(vertex[2],vertex[1],angleYZ);
+		vertex[2] = out2.x;
+		vertex[1] = out2.y;
+	})
 
 
 
+	//init
 	
 	var init = function(){
 		canvas = canvasControl.getCanvas();
@@ -81,6 +94,8 @@ var game=(function(){
 		draw();
 	}
 	
+	//events
+
 	var bindEvents = function(){
 		canvas.contextmenu(function(){return false;})
 		canvas.on("mousedown", function(e) {	
@@ -140,7 +155,10 @@ var game=(function(){
 			}
 		})
 	}
-	function rotate(x,y,angle){
+
+	//rotation
+
+	function rotate(x,y,angle){ // rotation around (0,0) with angle in radians
 		var radius = Math.sqrt(x*x+y*y);
 		var vertexangle = Math.atan2(y,x);
 		var out = {};
@@ -148,60 +166,40 @@ var game=(function(){
 		out.y = Math.sin(vertexangle + angle)*radius;
 		return out;
 	}
-	function calcord(vertex){
+	function calcord(vertex){ // converting 3d coordinates into 2d
 
-/*		var rotcoord = {
-			x: 2*Math.PI*(rotation.x + currentRotation.x)/canvas.w,
-			y: 2*Math.PI*(rotation.y + currentRotation.y)/canvas.h
-		}
-		if (currentRotation.x == 0){rotcoord.x=0;}
-		if (currentRotation.y == 0){rotcoord.y=0;}
+		//no perspective !comment to disable
+		return {x:vertex.x*1.2+canvas.w/2,y:vertex.y*1.2+canvas.h/2}
 
-		*/
-/*
-		var radius1 = Math.sqrt(vertex.y*vertex.y+vertex.z*vertex.z);
-
-		
-		var angle1 = Math.atan2(vertex.z,vertex.y);
-		
-		var x = vertex.x;
-		var y = Math.cos(angle1+rotcoord.y);
-		var z = Math.sin(angle1+rotcoord.y); 
-
-		y*=radius1;
-		z*=radius1;
-
-		var radius2 = Math.sqrt(x*x+z*z);
-		var angle2 = Math.atan2(z,x);
-		x = Math.cos(angle2+rotcoord.x);
-		z = Math.sin(angle2+rotcoord.x);
-
-		x*=radius2;
-		z*=radius2;*/
-
-		var fl = 100;
+		//perspective
+		var fl = 150;
 		var scale = fl/(fl+vertex.z);
 		return {x:canvas.w/2+vertex.x*scale , y:canvas.h/2+vertex.y * scale}
 
 	}
-	function update() {
+	function update() { // useless for now
 
 		setTimeout(update, 10);
 	}
 
-	function draw() {
+	function draw() { //drawring 60 fps
 		context.clearRect(0, 0, canvas.w, canvas.h);
 
 		context.strokeStyle = "#FF0000";
 	
+		//test
 		context.beginPath();
 		context.moveTo(10,10);
 		context.lineTo(0,0);
+
+		//the 3 points
 		myPoints.forEach(function (point) {
 			var p = calcord({x:point[0],y:point[1],z:point[2]});
 			context.moveTo(p.x,p.y);
-			context.arc(p.x,p.y,100/(100+point[2])*10,0,2*Math.PI);
+			context.arc(p.x,p.y,150/(150+point[2])*10,0,2*Math.PI);
 		});
+
+		//the cube
 		cube.forEach(function(e,index){
 			//var v1 = calcord(e[1]);
 			var v2 = calcord(e[2]);
