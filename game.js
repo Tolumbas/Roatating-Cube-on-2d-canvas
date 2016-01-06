@@ -10,7 +10,7 @@ var game=(function(){
 	var lastmove;
 	var rotateclick = false;
 
-	var myPoints = [[40,-50,-50],[0,-50,50],[0,50,50]];
+	var myPoints = [[2,-50,50],[50,-50,2],[50,50,50]];
 
 
 	for (var x =0;x<=1;x++){
@@ -23,30 +23,24 @@ var game=(function(){
 
 	// Cube Formation
 
-	cube.push(["moveTo",vtx[0],vtx[0]]);
 
 	cube.push(["lineTo",vtx[0],vtx[1]]);
 	cube.push(["lineTo",vtx[1],vtx[3]]);
 	cube.push(["lineTo",vtx[3],vtx[2]]);
 	cube.push(["lineTo",vtx[2],vtx[0]]);
 
-	cube.push(["moveTo",vtx[0],vtx[4]]);
 
 	cube.push(["lineTo",vtx[4],vtx[5]]);
 	cube.push(["lineTo",vtx[5],vtx[7]]);
 	cube.push(["lineTo",vtx[7],vtx[6]]);
 	cube.push(["lineTo",vtx[6],vtx[4]]);
 
-	cube.push(["moveTo",vtx[4],vtx[0]]);
 	cube.push(["lineTo",vtx[0],vtx[4]]);
 
-	cube.push(["moveTo",vtx[4],vtx[1]]);
 	cube.push(["lineTo",vtx[1],vtx[5]]);
 
-	cube.push(["moveTo",vtx[5],vtx[2]]);
 	cube.push(["lineTo",vtx[2],vtx[6]]);
 
-	cube.push(["moveTo",vtx[6],vtx[3]]);
 	cube.push(["lineTo",vtx[3],vtx[7]]);
 
 	// The three points controll
@@ -77,7 +71,14 @@ var game=(function(){
 		vertex[2] = out2.x;
 		vertex[1] = out2.y;
 	})
-
+	cube.forEach(function (line) {
+		if (line[0]=="lineTo"){
+			if (line[1].x*line[2].x<=0){
+				line.color="#000"
+			}
+			else line.color="#F00" 
+		}
+	})
 
 
 	//init
@@ -195,19 +196,27 @@ var game=(function(){
 
 		//the 3 points
 		myPoints.forEach(function (point) {
+			context.beginPath();
 			var p = calcord({x:point[0],y:point[1],z:point[2]});
 			context.moveTo(p.x,p.y);
 			context.arc(p.x,p.y,150/(150+point[2])*10,0,2*Math.PI);
+			context.stroke();
 		});
 
 		//the cube
 		cube.forEach(function(e,index){
-			//var v1 = calcord(e[1]);
+			context.beginPath();
+
+			var v1 = calcord(e[1]);
 			var v2 = calcord(e[2]);
-			if (e[0] == "moveTo")context.moveTo(v2.x,v2.y);
-			if (e[0] == "lineTo")context.lineTo(v2.x,v2.y);
+			if (e.color){context.strokeStyle=e.color}else{context.strokeStyle="#FF0"}
+			if (e[0] == "lineTo"){
+				context.moveTo(v1.x,v1.y);
+				context.lineTo(v2.x,v2.y);
+			}
+			context.stroke();
 		});
-		context.stroke();
+
 		
 		animate(draw);
 	}
