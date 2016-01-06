@@ -10,7 +10,7 @@ var game=(function(){
 	var lastmove;
 	var rotateclick = false;
 
-	var myPoints = [[50,-50,-50],[0,-50,50],[0,50,50]];
+	var myPoints = [[40,-50,-50],[0,-50,50],[0,50,50]];
 
 
 	for (var x =0;x<=1;x++){
@@ -57,8 +57,9 @@ var game=(function(){
 	var dp3z = myPoints[0][2]-myPoints[2][2];
 	var dp3y = myPoints[0][1]-myPoints[2][1];
 
-	var angleXY = Math.atan2(dp2x,dp2z);
-	var angleYZ = Math.atan2(dp3y,dp3z);
+
+	var angleXY = -Math.atan2(dp2x,dp2z);
+	var angleYZ = -Math.atan2(dp3y,dp3z);
 
 	vtx.forEach(function (vertex) {
 		var out1 = rotate(vertex.z,vertex.x,angleXY);
