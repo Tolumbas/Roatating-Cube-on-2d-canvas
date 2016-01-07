@@ -171,10 +171,10 @@ var game=(function(){
 	function calcord(vertex){ // converting 3d coordinates into 2d
 
 		//no perspective !comment to disable
-		return {x:vertex.x*1.2+canvas.w/2,y:vertex.y*1.2+canvas.h/2}
+		//return {x:vertex.x*1.2+canvas.w/2,y:vertex.y*1.2+canvas.h/2}
 
 		//perspective
-		var fl = 150;
+		var fl = 500;
 		var scale = fl/(fl+vertex.z);
 		return {x:canvas.w/2+vertex.x*scale , y:canvas.h/2+vertex.y * scale}
 
